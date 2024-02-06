@@ -79,7 +79,7 @@ const StatTitle = styled.h3`
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-rows: repeat(auto-fit, minmax(150px, 1fr));
   gap: 2px;
   width: 90%;
   ${space}
