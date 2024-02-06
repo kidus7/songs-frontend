@@ -7,13 +7,14 @@ import { colours } from 'styles/colours';
 
 const NavContainer = styled.nav`
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   background: ${colours.background};
   padding: 1rem 2rem;
   box-shadow: none;
   border-radius: 40px;
-  width: 50%;
-  min-width: min-content;
+  // width: 50%;
+  min-width: max-content;
   &:hover {
     color: ${colours.active};
   }
@@ -26,7 +27,7 @@ const NavLink = styled(Link)`
   color: ${colours.primary};
   text-decoration: none;
   padding: 0.5rem 1rem;
-  margin-left: 2rem;
+  margin-left: 0.8rem;
 
   &:hover, &.active {
     color: ${colours.active};
@@ -40,7 +41,7 @@ const Nav: React.FC = () => {
     <NavContainer>
       <NavLink to="/">Home</NavLink>
       <NavLink to="/songs">Songs</NavLink>
-      <NavLink to="/contact">Contact</NavLink>
+      {/* <NavLink to="/contact">Contact</NavLink> */}
     </NavContainer>
   );
 };

@@ -6,7 +6,7 @@ const ResponsiveContainer = styled.div`
   justify-content: center;
   height: 630px;
   width: 90%;
-  background-color: #f1f1f1;
+  background-color: #e9f0f8;
   border-radius: 20px;
   padding-left: 10px;
   padding-right: 10px;

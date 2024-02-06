@@ -16,7 +16,11 @@ export interface ListResponse<T> {
 
 export interface ListParams {
   page?: number;
-  pageNumber?: number;
+  pageSize?: number;
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
   [key: string]: any;
 }
 

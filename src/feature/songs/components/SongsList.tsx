@@ -2,28 +2,34 @@
 import { css } from '@emotion/react';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSongsStart, fetchSongsSuccess, deleteSongStart, selectSongs, selectError } from '../services/songsSlice';
+import { fetchSongsStart, fetchSongsSuccess, deleteSongStart, selectSongs, selectError, selectLoading } from '../services/songsSlice';
 import styled from '@emotion/styled';
+import { space, layout, flexbox, color, border, typography, shadow } from 'styled-system';
 import Nav from 'components/Nav/Nav';
-import { DataGrid, GridToolbar, getGridDateOperators } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from '@mui/icons-material/Add';
-import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogTitle, DialogActions } from "@mui/material"; // For dialog
 import Snackbar from 'components/Common/SnackBar';
 import { SongForm } from './SongForm';
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ResponsiveContainer from 'components/Common/ResponsiveContainer';
 import { Song } from 'models/song';
+import Loader from 'components/Common/Loader'
+import { FilterForm } from 'components/Common/FilterForm';
 
 const DashboardContainer = styled.div`
+  ${space}
+  ${layout}
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  padding-bottom: 3rem !important;
+  background-color: #f0f8ff;
 `;
 
-const PageTitle = styled.h4`
-  font-size: 1.5rem;
+const PageTitle = styled.h3`
+  font-size: 1.8rem;
   color: #39416F;
 `;
 
@@ -45,7 +51,7 @@ const ActionButton = styled.button`
 const RightAlignedWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  width: 100%; // Take full width to push the button to the end
+  width: 90%; // Take full width to push the button to the end
 `;
 
 const Button = styled.button`
@@ -60,7 +66,7 @@ const Button = styled.button`
   display: flex; 
   align-items: center;
   justify-content: center; 
-  margin-right: 2rem
+//   margin-right: 2rem
   &:hover {
     background-color: #283152;
     color: white;
@@ -101,11 +107,34 @@ const buttonStyle = css`
   }
 `;
 
+const IconContainer = styled.div`
+  ${space}
+  ${layout}
+  display: flex;
+  align-items: flex-start;
+  padding: 10px;
+  justify-content: flex-start;
+  width: 90%;
+`;
+
+const FilterButtonContainer = styled.div`
+  ${space}
+  ${layout}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 30%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+`;
+
 export const SongsList: React.FC = () => {
     const dispatch = useDispatch();
     const songs = useSelector(selectSongs);
     const error = useSelector(selectError);
-    const navigate = useNavigate();
+    const isLoading = useSelector(selectLoading)
     const [open, setOpen] = useState(false);
     const [newSong, setNewSong] = useState<Song | null>(null);
     const [notification, setNotification] = useState({ message: '', status: 'success' });
@@ -119,18 +148,17 @@ export const SongsList: React.FC = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (error) {
+        if (error && error != " ") {
             setNotification({ message: error, status: 'error' });
             setSnackbarOpen(true);
         }
     }, [error]);
 
     if (!songs || songs.length === 0) {
-        return <div>Loading statistics...</div>;
+        return <Loader isLoading={isLoading} loadingText="Loading Songs" />
     }
 
     const handleUpdate = (id: string) => {
-        console.log("IPID", id)
         const songToUpdate: any = songs.find((song) => song.id === id);
         setNewSong(songToUpdate);
         setOpen(true);
@@ -149,7 +177,6 @@ export const SongsList: React.FC = () => {
     };
 
     const handleDelete = (id: string) => {
-        // const songToUpdate: any = songs.find((song) => song.id === id);
         setSongToDelete(id);
         setOpenPopup(true)
     };
@@ -158,14 +185,23 @@ export const SongsList: React.FC = () => {
         setOpen(false);
     };
 
-    const handleSnackbarClose = () => {
-        setSnackbarOpen(false);
-    };
-
     const handleFormSubmit = () => {
         // setSnackbarOpen(true);
         setOpen(false);
     };
+
+    const applyFilter = (filters: any) => {
+        const queryParams = {
+            ...filters,
+            page: 1,
+            pageSize: 10,
+        };
+
+        // Dispatch the action to fetch filtered songs
+        dispatch(fetchSongsStart(queryParams));
+        setIsFilterDialogOpen(false);
+    };
+
 
     const columns = [
         {
@@ -211,13 +247,6 @@ export const SongsList: React.FC = () => {
         },
     ];
 
-    // const rows = songs.map((song) => ({
-    //     id: song.id,
-    //     title: song.title,
-    //     artist: song.artist,
-    //     album: song.album,
-    //     genre: song.genre,
-    // }));
     const rows = songs
         .filter(song => song.id !== undefined)
         .map(song => ({
@@ -236,11 +265,13 @@ export const SongsList: React.FC = () => {
                 status={notification.status}
                 onClose={() => setSnackbarOpen(false)}
             />
-
             <PageTitle>Songs Table</PageTitle>
-            {/* <br/> */}
-            <FilterAltIcon sx={{ float: "right", display: "flex", allignItems: "flex-end" }} onClick={toggleFilterVisibility} />
             <RightAlignedWrapper>
+                <IconContainer>
+                    <FilterButtonContainer onClick={toggleFilterVisibility}>
+                        <FilterAltIcon sx={{ float: "right", display: "flex", alignItems: "flex-end" }} />
+                    </FilterButtonContainer>
+                </IconContainer>
                 <Button
                     onClick={() => {
                         setNewSong(null)
@@ -271,28 +302,6 @@ export const SongsList: React.FC = () => {
                     rows={rows}
                     columns={columns}
                     getRowClassName={(params) => `super-app-theme`}
-                // components={{ Toolbar: GridToolbar }}
-                // // componentsProps={{
-                // //     toolbar: {
-                // //         showQuickFilter: false,
-                // //         quickFilterProps: { debounceMs: 800 },
-                // //         sx: {
-                // //             "& .MuiButton-text": {
-                // //                 color: "#39416F",
-                // //                 fontSize: 12,
-                // //             },
-                // //             "& .MuiButton-text:hover": {
-                // //                 color: "#39416F",
-                // //                 fontSize: 12,
-                // //             },
-                // //             "& .MuiButton-text:active": {
-                // //                 color: "#39416F",
-                // //                 fontSize: 12,
-                // //             },
-                // //         },
-                // //     },
-                // // }}
-                // hideFooterPagination
                 />
             </ResponsiveContainer>
             <Dialog
@@ -318,7 +327,6 @@ export const SongsList: React.FC = () => {
                             setSnackbarOpen(true);
                         }}
                     />
-
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
@@ -331,7 +339,7 @@ export const SongsList: React.FC = () => {
                     Filter Songs
                 </DialogTitle>
                 <DialogContent>
-
+                    <FilterForm onFilter={applyFilter}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleFilterDialogClose} color="primary">

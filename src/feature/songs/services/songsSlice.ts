@@ -97,5 +97,6 @@ export const {
 export const selectSongs = (state: RootState) => state.songs.songs;
 export const selectStatistics = (state: RootState) => state.songs.stats;
 export const selectError = (state: RootState) => state.songs.error;
+export const selectLoading = (state: RootState) => state.songs.loading;
 
 export default songsSlice.reducer;

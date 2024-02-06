@@ -25,7 +25,7 @@ function getApiErrorResponse(error: any): ApiErrorResponse {
     status: 'error',
     message: 'Unknown error occurred',
     error: {
-      message: 'No error message available',
+      message: '',
       statusCode: 500,
       status: 'error',
       isOperational: false,
@@ -33,7 +33,6 @@ function getApiErrorResponse(error: any): ApiErrorResponse {
     errorStack: ''
   };
 }
-
 
 function* fetchSongsSaga(action: FetchSongsAction) {
   try {

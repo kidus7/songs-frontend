@@ -10,7 +10,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%;
+//   width: 100%;
   max-width: 500px;
   padding: 20px;
 //   background-color: #f5f5f5;
