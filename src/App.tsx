@@ -1,25 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import { SongsList, SongForm } from 'feature/songs';
+import { Dashboard } from 'feature/dashboard';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <div className="page-wrapper">
+          <div id="loading-icon-bx"></div>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/songs" element={<SongsList />} />
+            {/* <Route path="/songs/add-song" element={<SongForm />} />
+            <Route path="/songs/:id/edit" element={<SongForm />} /> */}
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
 }
 
