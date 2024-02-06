@@ -42,6 +42,7 @@ const StatContainer = styled.div`
   ${layout}
   padding: 20px;
 //   background-color: #f0f8ff;
+  width: 100%;
 `;
 
 const StatCard = styled.div`
@@ -78,7 +79,7 @@ const StatTitle = styled.h3`
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-rows: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2px;
   width: 90%;
   ${space}
